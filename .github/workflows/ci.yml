@@ -1,0 +1,17 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [wasm, wasm-gc, js]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hustcer/setup-moonbit@v1
+      - run: moon check --deny-warn --target ${{ matrix.target }}
+      - run: moon test --deny-warn --target ${{ matrix.target }}
