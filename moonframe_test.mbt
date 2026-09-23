@@ -104,3 +104,18 @@ test "CRC-32 standard vector and checked frame" {
     _ => fail("tampering must be detected")
   }
 }
+
+///|
+test "decoder can recover at an application-defined boundary" {
+  let decoder = @moonframe.Decoder::new(max_frame_size=3)
+  match decoder.feed(@moonframe.encode_frame(b"toolong")) {
+    Err(@moonframe.FrameTooLarge(_, _)) => ()
+    _ => fail("limit must reject oversized input")
+  }
+  inspect(decoder.buffered() > 0, content="true")
+  decoder.reset()
+  match decoder.feed(@moonframe.encode_frame(b"ok")) {
+    Ok(frames) => inspect(frames[0] == b"ok", content="true")
+    Err(_) => fail("decoder must be reusable after reset")
+  }
+}

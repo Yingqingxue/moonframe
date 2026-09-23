@@ -17,6 +17,12 @@ pub fn Decoder::buffered(self : Decoder) -> Int {
 }
 
 ///|
+/// Discard partial data so a caller can recover at a known boundary.
+pub fn Decoder::reset(self : Decoder) -> Unit {
+  self.buffer.clear()
+}
+
+///|
 /// Feed any chunk size and return every complete frame now available.
 pub fn Decoder::feed(
   self : Decoder,
