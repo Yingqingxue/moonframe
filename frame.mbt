@@ -4,6 +4,8 @@ pub enum FrameError {
   NeedMore
   MalformedVarint
   FrameTooLarge(Int, Int)
+  MissingChecksum
+  ChecksumMismatch(UInt, UInt)
 }
 
 ///|

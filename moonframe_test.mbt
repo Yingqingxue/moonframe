@@ -88,3 +88,19 @@ test "finite stream helper rejects trailing partial frame" {
     _ => fail("truncated payload must be explicit")
   }
 }
+
+///|
+test "CRC-32 standard vector and checked frame" {
+  inspect(@moonframe.crc32(b"123456789") == 0xcbf43926U, content="true")
+  let encoded = @moonframe.encode_checked_frame(b"protected")
+  match @moonframe.decode_checked_frame(encoded) {
+    Ok((payload, _)) => inspect(payload == b"protected", content="true")
+    Err(_) => fail("untampered checksum must pass")
+  }
+  let tampered = encoded.to_array()
+  tampered[2] = (tampered[2].to_int() ^ 1).to_byte()
+  match @moonframe.decode_checked_frame(Bytes::from_array(tampered)) {
+    Err(@moonframe.ChecksumMismatch(_, _)) => ()
+    _ => fail("tampering must be detected")
+  }
+}
