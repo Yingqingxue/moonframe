@@ -34,3 +34,44 @@ test "frame size limit is enforced before allocation" {
     _ => fail("oversized frame must be rejected")
   }
 }
+
+///|
+test "incremental decoder tolerates one-byte chunks" {
+  let decoder = @moonframe.Decoder::new()
+  let encoded = @moonframe.encode_frame(b"fragmented")
+  let output : Array[Bytes] = []
+  for byte in encoded {
+    match decoder.feed(Bytes::from_array([byte])) {
+      Ok(frames) =>
+        for frame in frames {
+          output.push(frame)
+        }
+      Err(_) => fail("valid fragments must not fail")
+    }
+  }
+  inspect(output.length(), content="1")
+  inspect(output[0] == b"fragmented", content="true")
+  inspect(decoder.buffered(), content="0")
+}
+
+///|
+test "incremental decoder emits multiple coalesced frames" {
+  let first = @moonframe.encode_frame(b"a")
+  let second = @moonframe.encode_frame(b"bc")
+  let joined : Array[Byte] = []
+  for byte in first {
+    joined.push(byte)
+  }
+  for byte in second {
+    joined.push(byte)
+  }
+  let decoder = @moonframe.Decoder::new()
+  match decoder.feed(Bytes::from_array(joined)) {
+    Ok(frames) => {
+      inspect(frames.length(), content="2")
+      inspect(frames[0] == b"a", content="true")
+      inspect(frames[1] == b"bc", content="true")
+    }
+    Err(_) => fail("coalesced frames must decode")
+  }
+}
