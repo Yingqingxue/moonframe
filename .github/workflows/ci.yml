@@ -11,7 +11,7 @@ jobs:
       matrix:
         target: [wasm, wasm-gc, js]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: hustcer/setup-moonbit@v1
       - run: moon check --deny-warn --target ${{ matrix.target }}
       - run: moon build --deny-warn --target ${{ matrix.target }}
