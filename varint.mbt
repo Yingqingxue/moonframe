@@ -1,8 +1,11 @@
 ///|
 /// Encode a non-negative length as unsigned LEB128 (maximum 31 bits).
 pub fn encode_varint(value : Int) -> Bytes {
+  if value < 0 {
+    abort("varint value must be non-negative")
+  }
   let output : Array[Byte] = []
-  let mut remaining = if value < 0 { 0 } else { value }
+  let mut remaining = value
   for _i = 0; remaining > 0x7f; _i = _i + 1 {
     let low = remaining & 0x7f
     remaining = remaining >> 7

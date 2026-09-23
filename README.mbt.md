@@ -1,4 +1,3 @@
-# username/moonframe
 # MoonFrame
 
 MoonFrame is a pure-MoonBit framing toolkit for protocols that run over
@@ -11,7 +10,7 @@ payload allocation, and can attach CRC-32 corruption detection.
 - Unsigned LEB128 length prefixes with a five-byte bound
 - One-shot and incremental decoders
 - Correct handling of one-byte fragments and multiple frames per chunk
-- Configurable maximum frame size
+- Configurable maximum frame and buffered-input sizes
 - Explicit truncated, malformed, oversized, and checksum failures
 - Optional IEEE CRC-32 protected frames
 - Decoder reset at application-defined resynchronization boundaries

@@ -6,6 +6,7 @@ pub enum FrameError {
   FrameTooLarge(Int, Int)
   MissingChecksum
   ChecksumMismatch(UInt, UInt)
+  BufferLimitExceeded(Int, Int)
 }
 
 ///|
@@ -40,6 +41,16 @@ pub fn decode_frame(
   data : Bytes,
   max_frame_size? : Int = 1048576,
 ) -> Result[(Bytes, Int), FrameError] {
+  if data.length() >= 5 &&
+    (data[0].to_int() & 0x80) != 0 &&
+    (data[1].to_int() & 0x80) != 0 &&
+    (data[2].to_int() & 0x80) != 0 &&
+    (data[3].to_int() & 0x80) != 0 {
+    let fifth = data[4].to_int()
+    if (fifth & 0x80) != 0 || (fifth & 0x78) != 0 {
+      return Err(MalformedVarint)
+    }
+  }
   let (length, header_size) = match decode_varint(data) {
     Some(parsed) => parsed
     None => {

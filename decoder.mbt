@@ -3,11 +3,15 @@
 pub struct Decoder {
   buffer : Array[Byte]
   max_frame_size : Int
+  max_buffer_size : Int
 }
 
 ///|
-pub fn Decoder::new(max_frame_size? : Int = 1048576) -> Decoder {
-  Decoder::{ buffer: [], max_frame_size, }
+pub fn Decoder::new(
+  max_frame_size? : Int = 1048576,
+  max_buffer_size? : Int = max_frame_size + 5,
+) -> Decoder {
+  Decoder::{ buffer: [], max_frame_size, max_buffer_size, }
 }
 
 ///|
@@ -28,6 +32,10 @@ pub fn Decoder::feed(
   self : Decoder,
   chunk : Bytes,
 ) -> Result[Array[Bytes], FrameError] {
+  let requested = self.buffer.length() + chunk.length()
+  if requested > self.max_buffer_size {
+    return Err(BufferLimitExceeded(requested, self.max_buffer_size))
+  }
   for byte in chunk {
     self.buffer.push(byte)
   }

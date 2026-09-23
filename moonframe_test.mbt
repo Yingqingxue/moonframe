@@ -119,3 +119,24 @@ test "decoder can recover at an application-defined boundary" {
     Err(_) => fail("decoder must be reusable after reset")
   }
 }
+
+///|
+test "malformed 31-bit varints are rejected" {
+  match @moonframe.decode_frame(b"\xff\xff\xff\xff\x0f") {
+    Err(@moonframe.MalformedVarint) => ()
+    _ => fail("overflowing fifth varint byte must be rejected")
+  }
+}
+
+///|
+test "incremental decoder enforces a total buffer budget" {
+  let decoder = @moonframe.Decoder::new(max_frame_size=8, max_buffer_size=6)
+  match decoder.feed(b"\x08abcdef") {
+    Err(@moonframe.BufferLimitExceeded(actual, limit)) => {
+      inspect(actual, content="7")
+      inspect(limit, content="6")
+      inspect(decoder.buffered(), content="0")
+    }
+    _ => fail("oversized buffered input must be rejected before copying")
+  }
+}
