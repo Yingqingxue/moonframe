@@ -4,6 +4,7 @@
 
 - **项目名称：** MoonFrame：MoonBit 增量分帧基础库
 - **参赛者：** Yingqingxue（GitHub ID）
+- **联系方式：** 在报名问卷中填写本人手机号或邮箱
 - **项目方向：** 新生态项目建设 / 通用协议与数据流基础库
 - **GitHub：** https://github.com/Yingqingxue/moonframe
 - **项目性质：** 原创项目
