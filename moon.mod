@@ -9,13 +9,13 @@
 //   "moonbitlang/x@0.4.6",
 // }
 
-name = "username/moonframe"
+name = "Yingqingxue/moonframe"
 
 version = "0.1.0"
 
 readme = "README.mbt.md"
 
-repository = ""
+repository = "https://github.com/Yingqingxue/moonframe"
 
 license = "Apache-2.0"
 

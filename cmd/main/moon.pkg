@@ -1,5 +1,5 @@
 import {
-  "username/moonframe" @frame,
+  "Yingqingxue/moonframe" @frame,
 }
 
 pkgtype(kind: "executable")
