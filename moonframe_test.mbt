@@ -75,3 +75,16 @@ test "incremental decoder emits multiple coalesced frames" {
     Err(_) => fail("coalesced frames must decode")
   }
 }
+
+///|
+test "finite stream helper rejects trailing partial frame" {
+  let stream = @moonframe.encode_frames([b"one", b"two", b"three"])
+  match @moonframe.decode_all(stream) {
+    Ok(frames) => inspect(frames.length(), content="3")
+    Err(_) => fail("complete finite stream must decode")
+  }
+  match @moonframe.decode_all(b"\x05abc") {
+    Err(@moonframe.NeedMore) => ()
+    _ => fail("truncated payload must be explicit")
+  }
+}

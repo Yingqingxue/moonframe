@@ -21,6 +21,18 @@ pub fn encode_frame(payload : Bytes) -> Bytes {
 }
 
 ///|
+/// Encode several payloads as one concatenated framed stream.
+pub fn encode_frames(payloads : ArrayView[Bytes]) -> Bytes {
+  let output : Array[Byte] = []
+  for payload in payloads {
+    for byte in encode_frame(payload) {
+      output.push(byte)
+    }
+  }
+  Bytes::from_array(output)
+}
+
+///|
 /// Decode one complete frame and report total bytes consumed.
 pub fn decode_frame(
   data : Bytes,
@@ -43,4 +55,21 @@ pub fn decode_frame(
     return Err(NeedMore)
   }
   Ok((data[header_size:end].to_owned(), end))
+}
+
+///|
+/// Decode an entire finite stream and reject trailing partial data.
+pub fn decode_all(
+  data : Bytes,
+  max_frame_size? : Int = 1048576,
+) -> Result[Array[Bytes], FrameError] {
+  let decoder = Decoder::new(max_frame_size~)
+  match decoder.feed(data) {
+    Err(error) => Err(error)
+    Ok(frames) =>
+      match decoder.finish() {
+        Ok(_) => Ok(frames)
+        Err(error) => Err(error)
+      }
+  }
 }
