@@ -19,8 +19,8 @@ repository = ""
 
 license = "Apache-2.0"
 
-keywords = []
+keywords = [ "streaming", "framing", "codec", "protocol" ]
 
 preferred_target = "wasm"
 
-description = ""
+description = "Backend-neutral incremental framing primitives for MoonBit"

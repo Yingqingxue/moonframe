@@ -1,5 +1,5 @@
-// import {
-//   "username/moonframe" @lib,
-// }
+import {
+  "username/moonframe" @frame,
+}
 
 pkgtype(kind: "executable")
